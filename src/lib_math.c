@@ -3,7 +3,7 @@
 ** Copyright (C) 2005-2021 Mike Pall. See Copyright Notice in luajit.h
 */
 
-#include <math.h>
+#include "streflop_cond.h"
 
 #define lib_math_c
 #define LUA_LIB

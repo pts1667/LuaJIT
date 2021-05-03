@@ -8,7 +8,7 @@
 
 /* For pointers to libc/libm functions. */
 #include <stdio.h>
-#include <math.h>
+#include "streflop_cond.h"
 
 #include "lj_obj.h"
 
