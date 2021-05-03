@@ -1,7 +1,7 @@
 include(TestBigEndian)
 include(ExternalProject)
 
-include_directories(BEFORE ../streflop)
+include_directories(BEFORE ../../streflop)
 
 if (MARCH_FLAG)
   set(LJ_MARCH "-march=${MARCH_FLAG}")
@@ -142,33 +142,33 @@ add_custom_target(ljvm
 
 set(LJ_BCDEF "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_bcdef.h")
 add_custom_target(lj_bcdef
-  COMMAND ${BUILDVM_X} -m bcdef -o LJ_BCDEF sources_ljlib
+  COMMAND ${BUILDVM_X} -m bcdef -o ${LJ_BCDEF} ${sources_ljlib}
 )
 
 set(LJ_FFDEF "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ffdef.h")
 add_custom_target(lj_ffdef
-  COMMAND ${BUILDVM_X} -m ffdef -o LJ_FFDEF sources_ljlib
+  COMMAND ${BUILDVM_X} -m ffdef -o ${LJ_FFDEF} ${sources_ljlib}
 )
 
 set(LJ_LIBDEF "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_libdef.h")
 add_custom_target(lj_libdef
-  COMMAND ${BUILDVM_X} -m libdef -o LJ_LIBDEF sources_ljlib
+  COMMAND ${BUILDVM_X} -m libdef -o ${LJ_LIBDEF} ${sources_ljlib}
 )
 
 set(LJ_RECDEF "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_recdef.h")
 add_custom_target(lj_recdef
-  COMMAND ${BUILDVM_X} -m recdef -o LJ_RECDEF sources_ljlib
+  COMMAND ${BUILDVM_X} -m recdef -o ${LJ_RECDEF} ${sources_ljlib}
 )
 
 set(LIB_VMDEF "${CMAKE_CURRENT_SOURCE_DIR}/src/jit/vmdef.lua")
 add_custom_target(vmdef
-  COMMAND ${BUILDVM_X} -m vmdef -o LIB_VMDEF sources_ljlib
+  COMMAND ${BUILDVM_X} -m vmdef -o ${LIB_VMDEF} ${sources_ljlib}
 )
 
 set(LJ_FOLDDEF "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_folddef.h")
 set(luajit_foldopt_src "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_opt_fold.c")
 add_custom_target(lj_folddef
-  COMMAND ${BUILDVM_X} -m folddef -o LJ_FOLDDEF luajit_foldopt_src
+  COMMAND ${BUILDVM_X} -m folddef -o ${LJ_FOLDDEF} ${luajit_foldopt_src}
 )
 
 set(LJ_GENFILES ${LJ_FOLDDEF} ${LJ_VMDEF} ${LJ_RECDEF} ${LJ_LIBDEF} ${LJ_FFDEF} ${LJ_BCDEF} ${LJVM_BOUT})
@@ -177,4 +177,9 @@ add_dependencies(luajit
   ljvm lj_bcdef lj_ffdef lj_libdef lj_recdef vmdef lj_folddef)
 
 target_sources(luajit
-  ${sources_luajit} ${sources_ljlib})
+  ${sources_luajit} ${sources_ljlib} ${LJ_GENFILES})
+
+if (ENABLE_STREFLOP)
+  target_link_libraries(luajit streflop)
+endif ()
+
