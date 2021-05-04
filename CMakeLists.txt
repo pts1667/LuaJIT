@@ -177,7 +177,7 @@ add_dependencies(luajit
   ljvm lj_bcdef lj_ffdef lj_libdef lj_recdef vmdef lj_folddef)
 
 target_sources(luajit
-  ${sources_luajit} ${sources_ljlib} ${LJ_GENFILES})
+  PUBLIC ${sources_luajit} ${sources_ljlib} ${LJ_GENFILES})
 
 if (ENABLE_STREFLOP)
   target_link_libraries(luajit streflop)
