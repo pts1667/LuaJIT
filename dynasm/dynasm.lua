@@ -201,7 +201,7 @@ function opt_map.D(args)
   elseif match(namesubst, "^[%a_][%w_]*$") then
     map_def[namesubst] = "1"
   else
-    opterror("bad define")
+    opterror("bad define: " .. namesubst)
   end
 end
 
@@ -211,7 +211,7 @@ function opt_map.U(args)
   if match(name, "^[%a_][%w_]*$") then
     map_def[name] = nil
   else
-    opterror("bad define")
+    opterror("bad define: " .. namesubst)
   end
 end
 
