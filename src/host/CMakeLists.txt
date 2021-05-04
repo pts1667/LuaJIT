@@ -40,7 +40,8 @@ target_link_libraries(minilua PRIVATE m)
 add_custom_target(buildvm_arch
   COMMAND minilua ${DASM} ${DASM_FLAGS} -o "${CMAKE_CURRENT_SOURCE_DIR}/buildvm_arch.h" ${DASM_DASC}
   DEPENDS minilua
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  VERBATIM
 )
 
 # build buildvm
