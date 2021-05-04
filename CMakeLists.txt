@@ -1,4 +1,3 @@
-include(TestBigEndian)
 include(ExternalProject)
 
 include_directories(BEFORE ../../streflop)
@@ -127,31 +126,6 @@ else ()
   set(BUILDVM_X "${HOST_BIN}/buildvm")
 endif ()
 
-add_library(luajit STATIC)
-target_compile_definitions(luajit PUBLIC LJ_ABI_SOFTFP=0 LJ_ARCH_HASFPU=1 LJ_64=1 LJ_GC64=1 LJ_FR2=1 _FILE_OFFSET_BITS=64 _LARGEFILE_SOURCE LJ_ABI_SOFTFP=0)
-if (MINGW OR MSVC) # windows
-  target_compile_definitions(luajit PUBLIC WIN LUAJIT_OS=LUAJIT_OS_WINDOWS)
-  set(LJVM_MODE peobj)
-elseif (APPLE) # OS X
-  target_compile_definitions(luajit PUBLIC LUAJIT_OS=LUAJIT_OS_OSX)
-  set(LJVM_MODE machasm)
-elseif (UNIX) # Linux
-  target_compile_definitions(luajit PUBLIC LUAJIT_OS=LUAJIT_OS_LINUX)
-  set(LJVM_MODE elfasm)
-else () # something else
-  target_compile_definitions(luajit PUBLIC LUAJIT_OS=LUAJIT_OS_OTHER)
-  set(LJVM_MODE elfasm)
-endif()
-
-set(IS_BE 0)
-TEST_BIG_ENDIAN(IS_BE)
-
-if (IS_BE MATCHES 1)
-  target_compile_definitions(luajit PUBLIC ENDIAN_BE)
-else ()
-  target_compile_definitions(luajit PUBLIC ENDIAN_LE)
-endif ()
-
 set(LJVM_BOUT "{CMAKE_CURRENT_SOURCE_DIR}/src/lj_vm.S")
 add_custom_target(ljvm
   COMMAND ${BUILDVM_X} -m ${LJVM_MODE} -o ${LJVM_BOUT}
@@ -197,13 +171,25 @@ add_custom_target(lj_folddef
 
 set(LJ_GENFILES ${LJ_FOLDDEF} ${LJ_VMDEF} ${LJ_RECDEF} ${LJ_LIBDEF} ${LJ_FFDEF} ${LJ_BCDEF} ${LJVM_BOUT})
 
+add_library(luajit STATIC ${sources_luajit} ${sources_ljlib} ${LJ_GENFILES})
 add_dependencies(luajit
   ljvm lj_bcdef lj_ffdef lj_libdef lj_recdef vmdef lj_folddef)
 
-target_sources(luajit
-  PUBLIC ${sources_luajit} ${sources_ljlib} ${LJ_GENFILES})
+target_compile_definitions(luajit PUBLIC LJ_ABI_SOFTFP=0 LJ_ARCH_HASFPU=1 LJ_64=1 LJ_GC64=1 LJ_FR2=1 _FILE_OFFSET_BITS=64 _LARGEFILE_SOURCE LJ_ABI_SOFTFP=0)
+if (MINGW OR MSVC) # windows
+  target_compile_definitions(luajit PUBLIC WIN LUAJIT_OS=LUAJIT_OS_WINDOWS)
+  set(LJVM_MODE peobj)
+elseif (APPLE) # OS X
+  target_compile_definitions(luajit PUBLIC LUAJIT_OS=LUAJIT_OS_OSX)
+  set(LJVM_MODE machasm)
+elseif (UNIX) # Linux
+  target_compile_definitions(luajit PUBLIC LUAJIT_OS=LUAJIT_OS_LINUX)
+  set(LJVM_MODE elfasm)
+else () # something else
+  target_compile_definitions(luajit PUBLIC LUAJIT_OS=LUAJIT_OS_OTHER)
+  set(LJVM_MODE elfasm)
+endif()
 
 if (ENABLE_STREFLOP)
   target_link_libraries(luajit streflop)
 endif ()
-
