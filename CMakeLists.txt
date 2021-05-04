@@ -92,7 +92,7 @@ set(sources_genfiles
   "lj_opt_fold.c"
 )
 
-include_directories(builds)
+add_subdirectory(builds)
 
 add_library(luajit STATIC ${sources_luajit} ${sources_ljlib} ${sources_genfiles})
 add_dependencies(luajit
