@@ -100,16 +100,24 @@ set(DASM_DASC "vm_${DASM_ARCH}.dasc")
 
 # build luajit toolchain on host
 set(HOST_BIN "${CMAKE_BINARY_DIR}/host")
-execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory "${HOST_BIN}")
-execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
+add_custom_target(hostbuild_mkdir
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${HOST_BIN}"
+)
+
+add_custom_target(hostbuild_config
+  COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
   -DCMAKE_BUILD_TYPE="Release"
   -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
   "${CMAKE_SOURCE_DIR}/src/host"
   WORKING_DIRECTORY "${HOST_BIN}"
+  DEPENDS hostbuild_mkdir
 )
 
-execute_process(COMMAND ${CMAKE_COMMAND} --build .
-  WORKING_DIRECTORY "${HOST_BIN}")
+add_custom_target(hostbuild
+  COMMAND ${CMAKE_COMMAND} --build .
+  WORKING_DIRECTORY "${HOST_BIN}"
+  DEPENDS hostbuild_config
+)
 
 if (MSVC)
   set(BUILDVM_X "${HOST_BIN}/Release/buildvm.exe")
@@ -147,37 +155,44 @@ endif ()
 set(LJVM_BOUT "{CMAKE_CURRENT_SOURCE_DIR}/src/lj_vm.S")
 add_custom_target(ljvm
   COMMAND ${BUILDVM_X} -m ${LJVM_MODE} -o ${LJVM_BOUT}
+  DEPENDS hostbuild
 )
 
 set(LJ_BCDEF "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_bcdef.h")
 add_custom_target(lj_bcdef
   COMMAND ${BUILDVM_X} -m bcdef -o ${LJ_BCDEF} ${sources_ljlib}
+  DEPENDS hostbuild
 )
 
 set(LJ_FFDEF "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ffdef.h")
 add_custom_target(lj_ffdef
   COMMAND ${BUILDVM_X} -m ffdef -o ${LJ_FFDEF} ${sources_ljlib}
+  DEPENDS hostbuild
 )
 
 set(LJ_LIBDEF "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_libdef.h")
 add_custom_target(lj_libdef
   COMMAND ${BUILDVM_X} -m libdef -o ${LJ_LIBDEF} ${sources_ljlib}
+  DEPENDS hostbuild
 )
 
 set(LJ_RECDEF "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_recdef.h")
 add_custom_target(lj_recdef
   COMMAND ${BUILDVM_X} -m recdef -o ${LJ_RECDEF} ${sources_ljlib}
+  DEPENDS hostbuild
 )
 
 set(LIB_VMDEF "${CMAKE_CURRENT_SOURCE_DIR}/src/jit/vmdef.lua")
 add_custom_target(vmdef
   COMMAND ${BUILDVM_X} -m vmdef -o ${LIB_VMDEF} ${sources_ljlib}
+  DEPENDS hostbuild
 )
 
 set(LJ_FOLDDEF "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_folddef.h")
 set(luajit_foldopt_src "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_opt_fold.c")
 add_custom_target(lj_folddef
   COMMAND ${BUILDVM_X} -m folddef -o ${LJ_FOLDDEF} ${luajit_foldopt_src}
+  DEPENDS hostbuild
 )
 
 set(LJ_GENFILES ${LJ_FOLDDEF} ${LJ_VMDEF} ${LJ_RECDEF} ${LJ_LIBDEF} ${LJ_FFDEF} ${LJ_BCDEF} ${LJVM_BOUT})
