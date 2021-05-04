@@ -46,6 +46,8 @@ add_custom_target(buildvm_arch
 )
 
 # build buildvm
+include_directories(../)
+
 add_executable(buildvm ${luajit_host_sources})
 add_dependencies(buildvm buildvm_arch)
 target_include_directories(buildvm PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../../dynasm)
