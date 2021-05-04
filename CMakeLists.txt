@@ -88,11 +88,13 @@ set(sources_luajit
   "${CMAKE_CURRENT_SOURCE_DIR}/src/luajit.c"
 )
 
+set(sources_genfiles
+  "lj_opt_fold.c"
+)
+
 include_directories(builds)
 
-set(LJ_GENFILES ${LJ_FOLDDEF} ${LJ_VMDEF} ${LJ_RECDEF} ${LJ_LIBDEF} ${LJ_FFDEF} ${LJ_BCDEF} ${LJVM_BOUT})
-
-add_library(luajit STATIC ${sources_luajit} ${sources_ljlib} ${LJ_GENFILES})
+add_library(luajit STATIC ${sources_luajit} ${sources_ljlib} ${sources_genfiles})
 add_dependencies(luajit
   ljvm lj_bcdef lj_ffdef lj_libdef lj_recdef vmdef lj_folddef)
 
