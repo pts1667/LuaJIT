@@ -89,15 +89,12 @@ set(sources_luajit
 )
 
 set(sources_genfiles
-  "lj_opt_fold.c"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_opt_fold.c"
 )
 
 add_subdirectory(builds)
 
 add_library(luajit STATIC ${sources_luajit} ${sources_ljlib} ${sources_genfiles})
-add_dependencies(luajit
-  ljvm lj_bcdef lj_ffdef lj_libdef lj_recdef vmdef lj_folddef)
-
 target_compile_definitions(luajit PUBLIC LJ_ABI_SOFTFP=0 LJ_ARCH_HASFPU=1 LJ_64=1 LJ_GC64=1 LJ_FR2=1 _FILE_OFFSET_BITS=64 _LARGEFILE_SOURCE LJ_ABI_SOFTFP=0)
 if (MINGW OR MSVC) # windows
   target_compile_definitions(luajit PUBLIC WIN LUAJIT_OS=LUAJIT_OS_WINDOWS)
