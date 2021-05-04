@@ -31,7 +31,7 @@ int _CRT_glob = 0;
 #include <stddef.h>
 #include <stdarg.h>
 #include <limits.h>
-#include "streflop_cond.h"
+#include <math.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
