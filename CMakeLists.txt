@@ -1,5 +1,3 @@
-include(ExternalProject)
-
 include_directories(BEFORE ../../streflop)
 
 if (MARCH_FLAG)
