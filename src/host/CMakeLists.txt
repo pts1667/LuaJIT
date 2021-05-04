@@ -34,7 +34,7 @@ set(luajit_host_sources
 )
 
 # build minilua
-add_executable(minilua luajit_minilua_sources)
+add_executable(minilua ${luajit_minilua_sources})
 
 add_custom_target(buildvm_arch
   COMMAND minilua ${DASM} ${DASM_FLAGS} -o host/buildvm_arch.h ${DASM_DASC}
