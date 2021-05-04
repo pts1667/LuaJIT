@@ -15,7 +15,7 @@ set(DASM_FLAGS "-D JIT -D P64 -D HFABI -D FPU -D FFI")
 set(IS_BE 0)
 TEST_BIG_ENDIAN(IS_BE)
 
-if (IS_BE matches 1)
+if (IS_BE MATCHES 1)
   set(DASM_FLAGS "${DASM_FLAGS} -D ENDIAN_BE")
 else ()
   set(DASM_FLAGS "${DASM_FLAGS} -D ENDIAN_LE")

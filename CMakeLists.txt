@@ -112,7 +112,7 @@ endif ()
 
 add_library(luajit STATIC)
 target_compile_definitions(luajit PUBLIC LJ_ABI_SOFTFP=0 LJ_ARCH_HASFPU=1 LJ_64=1 LJ_GC64=1 LJ_FR2=1 _FILE_OFFSET_BITS=64 _LARGEFILE_SOURCE LJ_ABI_SOFTFP=0)
-if (MINGW or MSVC) # windows
+if (MINGW OR MSVC) # windows
   target_compile_definitions(luajit PUBLIC WIN LUAJIT_OS=LUAJIT_OS_WINDOWS)
   set(LJVM_MODE peobj)
 elseif (APPLE) # OS X
@@ -129,7 +129,7 @@ endif()
 set(IS_BE 0)
 TEST_BIG_ENDIAN(IS_BE)
 
-if (IS_BE matches 1)
+if (IS_BE MATCHES 1)
   target_compile_definitions(luajit PUBLIC ENDIAN_BE)
 else ()
   target_compile_definitions(luajit PUBLIC ENDIAN_LE)
