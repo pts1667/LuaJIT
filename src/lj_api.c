@@ -716,6 +716,21 @@ LUA_API void lua_pushlightuserdata(lua_State *L, void *p)
   incr_top(L);
 }
 
+//SPRING
+LUA_API void lua_pushhstring(lua_State *L,
+                             lua_Hash h, const char *s, size_t len)
+{
+  // LuaJIT hashes internally, no needed to use the provided hash
+  lj_gc_check(L);
+  lua_pushstring(L, s);
+}
+
+//SPRING
+LUA_API lua_Hash lua_calchash(const char *str, size_t l)
+{
+  return hash_sparse(0xF0F0F0F0, str, (MSize)l);
+}
+
 LUA_API void lua_createtable(lua_State *L, int narray, int nrec)
 {
   lj_gc_check(L);

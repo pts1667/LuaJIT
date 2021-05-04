@@ -48,14 +48,18 @@ LJLIB_CF(os_execute)
   return 1;
 #endif
 #else
-  const char *cmd = luaL_optstring(L, 1, NULL);
-  int stat = system(cmd);
+  if (!G(L)->system_func) { /* SPRING */
+    setintV(L->top++, -1);
+  } else {
+    const char *cmd = luaL_optstring(L, 1, NULL);
+    int stat = system(cmd);
 #if LJ_52
-  if (cmd)
-    return luaL_execresult(L, stat);
-  setboolV(L->top++, 1);
+    if (cmd)
+      return luaL_execresult(L, stat);
+    setboolV(L->top++, 1);
 #else
-  setintV(L->top++, stat);
+    setintV(L->top++, stat);
+  }
 #endif
   return 1;
 #endif
@@ -63,12 +67,22 @@ LJLIB_CF(os_execute)
 
 LJLIB_CF(os_remove)
 {
+  if (!G(L)->remove_func) { /* SPRING */
+    setnilV(L->top++);
+    return 3;
+  }
+
   const char *filename = luaL_checkstring(L, 1);
   return luaL_fileresult(L, remove(filename) == 0, filename);
 }
 
 LJLIB_CF(os_rename)
 {
+  if (!G(L)->rename_func) { /* SPRING */
+    setnilV(L->top++);
+    return 3;
+  }
+  
   const char *fromname = luaL_checkstring(L, 1);
   const char *toname = luaL_checkstring(L, 2);
   return luaL_fileresult(L, rename(fromname, toname) == 0, fromname);

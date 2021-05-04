@@ -650,8 +650,16 @@ typedef struct global_State {
   MRef jit_base;	/* Current JIT code L->base or NULL. */
   MRef ctype_state;	/* Pointer to C type state. */
   PRNGState prng;	/* Global PRNG state. */
-  void *ud; /* Auxillary user data. */
   GCRef gcroot[GCROOT_MAX];  /* GC roots. */
+
+  //SPRING additions
+  void *ud; /* Auxillary user data. */
+  lua_Func_fopen fopen_func;
+  lua_Func_popen popen_func;
+  lua_Func_pclose pclose_func;
+  lua_Func_system system_func;
+  lua_Func_remove remove_func;
+  lua_Func_rename rename_func;
 } global_State;
 
 #define mainthread(g)	(&gcref(g->mainthref)->th)

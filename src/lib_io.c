@@ -82,12 +82,14 @@ static IOFileUD *io_file_new(lua_State *L)
 
 static IOFileUD *io_file_open(lua_State *L, const char *mode)
 {
-  const char *fname = strdata(lj_lib_checkstr(L, 1));
-  IOFileUD *iof = io_file_new(L);
-  iof->fp = fopen(fname, mode);
-  if (iof->fp == NULL)
-    luaL_argerror(L, 1, lj_strfmt_pushf(L, "%s: %s", fname, strerror(errno)));
-  return iof;
+  if (G(L)->fopen_func != NULL) {
+    const char *fname = strdata(lj_lib_checkstr(L, 1));
+    IOFileUD *iof = io_file_new(L);
+    iof->fp = G(L)->fopen_func(fname, mode);
+    if (iof->fp == NULL)
+      luaL_argerror(L, 1, lj_strfmt_pushf(L, "%s: %s", fname, strerror(errno)));
+    return iof;
+  }
 }
 
 static int io_file_close(lua_State *L, IOFileUD *iof)
@@ -412,6 +414,8 @@ LJLIB_CF(io_open)
 
 LJLIB_CF(io_popen)
 {
+  if (!G(L)->popen_func)
+    return luaL_error(L, LUA_QL("popen") " cannot be accessed in this context");
 #if LJ_TARGET_POSIX || (LJ_TARGET_WINDOWS && !LJ_TARGET_XBOXONE && !LJ_TARGET_UWP)
   const char *fname = strdata(lj_lib_checkstr(L, 1));
   GCstr *s = lj_lib_optstr(L, 2);
@@ -420,9 +424,9 @@ LJLIB_CF(io_popen)
   iof->type = IOFILE_TYPE_PIPE;
 #if LJ_TARGET_POSIX
   fflush(NULL);
-  iof->fp = popen(fname, mode);
+  iof->fp = G(L)->popen_func(fname, mode);
 #else
-  iof->fp = _popen(fname, mode);
+  iof->fp = G(L)->popen_func(fname, mode);
 #endif
   return iof->fp != NULL ? 1 : luaL_fileresult(L, 0, fname);
 #else
@@ -543,3 +547,50 @@ LUALIB_API int luaopen_io(lua_State *L)
   return 1;
 }
 
+/* SPRING */
+static FILE *lua_fopen(lua_State *L, const char *filename, const char *mode)
+{
+  if (G(L)->fopen_func)
+  {
+    return G(L)->fopen_func(L, filename, mode);
+  }
+
+  return NULL;
+}
+
+/* SPRING syscall additions */
+LUA_API void lua_set_fopen(lua_State *L, lua_Func_fopen func)
+{
+  G(L)->fopen_func = func;
+}
+
+LUA_API void lua_set_popen(lua_State *L, lua_Func_popen popen_func,
+                           lua_Func_pclose pclose_func)
+{
+  if (popen_func && pclose_func)
+  {
+    G(L)->popen_func = popen_func;
+    G(L)->pclose_func = pclose_func;
+  }
+  else
+  {
+    G(L)->popen_func = NULL;
+    G(L)->pclose_func = NULL;
+  }
+}
+
+LUA_API void lua_set_system(lua_State *L, lua_Func_system func)
+{
+  G(L)->system_func = func;
+}
+
+LUA_API void lua_set_remove(lua_State *L, lua_Func_remove func)
+{
+  G(L)->remove_func = func;
+}
+
+LUA_API void lua_set_rename(lua_State *L, lua_Func_rename func)
+{
+  G(L)->rename_func = func;
+}
+/* END SPRING syscall additions */
