@@ -38,7 +38,7 @@ add_executable(minilua ${luajit_minilua_sources})
 target_link_libraries(minilua PRIVATE m)
 
 add_custom_target(buildvm_arch
-  COMMAND minilua ${DASM} ${DASM_FLAGS} -o host/buildvm_arch.h ${DASM_DASC}
+  COMMAND minilua ${DASM} ${DASM_FLAGS} -o "${CMAKE_CURRENT_SOURCE_DIR}/buildvm_arch.h" ${DASM_DASC}
   DEPENDS minilua
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
