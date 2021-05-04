@@ -99,15 +99,24 @@ set(DASM_ARCH TARGET_LJARCH)
 set(DASM_DASC "vm_${DASM_ARCH}.dasc")
 
 # build luajit toolchain on host
-ExternalProject_Add(luajit_host 
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/host
-  BUILD_IN_SOURCE TRUE
+set(HOST_BIN "${CMAKE_BINARY_DIR}/host")
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory "${HOST_BIN}")
+execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
+  -DCMAKE_BUILD_TYPE="Release"
+  -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
+  "${CMAKE_SOURCE_DIR}/src/host"
+  WORKING_DIRECTORY "${HOST_BIN}"
 )
 
+execute_process(COMMAND ${CMAKE_COMMAND} --build .
+  WORKING_DIRECTORY "${HOST_BIN}")
+
 if (MSVC)
-  set(BUILDVM_X ${CMAKE_CURRENT_SOURCE_DIR}/src/host/buildvm.exe)
+  set(BUILDVM_X "${HOST_BIN}/Release/buildvm.exe")
+elseif (CMAKE_GENERATOR STREQUAL "Xcode")
+  set(BUILDVM_X "${HOST_BIN}/Release/buildvm")
 else ()
-  set(BUILDVM_X ${CMAKE_CURRENT_SOURCE_DIR}/src/host/buildvm)
+  set(BUILDVM_X "${HOST_BIN}/buildvm")
 endif ()
 
 add_library(luajit STATIC)
