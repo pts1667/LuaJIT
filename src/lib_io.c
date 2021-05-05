@@ -85,7 +85,7 @@ static IOFileUD *io_file_open(lua_State *L, const char *mode)
   if (G(L)->fopen_func != NULL) {
     const char *fname = strdata(lj_lib_checkstr(L, 1));
     IOFileUD *iof = io_file_new(L);
-    iof->fp = G(L)->fopen_func(fname, mode);
+    iof->fp = G(L)->fopen_func(L, fname, mode);
     if (iof->fp == NULL)
       luaL_argerror(L, 1, lj_strfmt_pushf(L, "%s: %s", fname, strerror(errno)));
     return iof;
@@ -424,9 +424,9 @@ LJLIB_CF(io_popen)
   iof->type = IOFILE_TYPE_PIPE;
 #if LJ_TARGET_POSIX
   fflush(NULL);
-  iof->fp = G(L)->popen_func(fname, mode);
+  iof->fp = G(L)->popen_func(L, fname, mode);
 #else
-  iof->fp = G(L)->popen_func(fname, mode);
+  iof->fp = G(L)->popen_func(L, fname, mode);
 #endif
   return iof->fp != NULL ? 1 : luaL_fileresult(L, 0, fname);
 #else
