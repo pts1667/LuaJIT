@@ -7,7 +7,7 @@
 #define LUA_CORE
 
 #include <errno.h>
-#include "streflop_cond.h"
+#include "streflopC.h"
 
 #include "lj_obj.h"
 #include "lj_ir.h"

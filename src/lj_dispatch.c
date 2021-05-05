@@ -39,7 +39,7 @@ LJ_STATIC_ASSERT(GG_NUM_ASMFF == FF_NUM_ASMFUNC);
 /* -- Dispatch table management ------------------------------------------- */
 
 #if LJ_TARGET_MIPS
-#include "streflop_cond.h"
+#include "streflopC.h"
 LJ_FUNCA_NORET void LJ_FASTCALL lj_ffh_coroutine_wrap_err(lua_State *L,
 							  lua_State *co);
 #if !LJ_HASJIT

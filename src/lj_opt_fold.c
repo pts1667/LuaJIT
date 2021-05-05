@@ -8,7 +8,7 @@
 #define lj_opt_fold_c
 #define LUA_CORE
 
-#include "streflop_cond.h"
+#include "streflopC.h"
 
 #include "lj_obj.h"
 

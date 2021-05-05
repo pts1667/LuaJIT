@@ -3,7 +3,7 @@
 ** Copyright (C) 2005-2021 Mike Pall. See Copyright Notice in luajit.h
 */
 
-#include "streflop_cond.h"
+#include "streflopC.h"
 
 #define lj_strscan_c
 #define LUA_CORE
