@@ -382,6 +382,12 @@ LUALIB_API lua_Number luaL_checknumber(lua_State *L, int idx)
   return numV(&tmp);
 }
 
+// SPRING
+LUALIB_API lua_Number luaL_checknumber_noassert (lua_State *L, int idx)
+{
+  return luaL_checknumber(L, idx);
+}
+
 LUALIB_API lua_Number luaL_optnumber(lua_State *L, int idx, lua_Number def)
 {
   cTValue *o = index2adr(L, idx);

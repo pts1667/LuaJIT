@@ -95,6 +95,14 @@ typedef void * (*lua_Alloc) (void *ud, void *ptr, size_t osize, size_t nsize);
 #include LUA_USER_H
 #endif
 
+#ifndef lua_lock
+#define lua_lock(L) ((void)0)
+#define lua_unlock(L) ((void)0)
+#endif
+
+#ifndef luai_threadyield
+#define luai_threadyield(L)     {lua_unlock(L); lua_lock(L);}
+#endif
 
 /* type of numbers in Lua */
 typedef LUA_NUMBER lua_Number;
