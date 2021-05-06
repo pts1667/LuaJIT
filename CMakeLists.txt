@@ -110,18 +110,14 @@ target_compile_definitions(luajit PUBLIC
 
 if (MINGW OR MSVC) # windows
   target_compile_definitions(luajit PUBLIC WIN LUAJIT_OS=LUAJIT_OS_WINDOWS)
-  set(LJVM_MODE peobj)
 elseif (APPLE) # OS X
   target_compile_definitions(luajit PUBLIC LUAJIT_OS=LUAJIT_OS_OSX)
-  set(LJVM_MODE machasm)
 elseif (UNIX) # Linux
   target_compile_definitions(luajit PUBLIC LUAJIT_OS=LUAJIT_OS_LINUX)
-  set(LJVM_MODE elfasm)
 else () # something else
   target_compile_definitions(luajit PUBLIC LUAJIT_OS=LUAJIT_OS_OTHER)
-  set(LJVM_MODE elfasm)
 endif()
 
 if (ENABLE_STREFLOP)
-  target_link_libraries(luajit streflop)
+  target_link_libraries(luajit PUBLIC streflop)
 endif ()
