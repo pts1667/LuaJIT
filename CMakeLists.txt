@@ -92,9 +92,13 @@ set(sources_genfiles
   "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_opt_fold.c"
 )
 
+set(sources_ljamalg
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/ljamalg.c"
+)
+
 add_subdirectory(builds)
 
-add_library(luajit STATIC ${sources_luajit} ${sources_ljlib} ${sources_genfiles})
+add_library(luajit STATIC ${sources_ljamalg})
 target_compile_definitions(luajit PUBLIC 
   LUAJIT_TARGET=LUAJIT_ARCH_X64
   LJ_NO_UNWIND=1
