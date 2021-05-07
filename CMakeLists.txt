@@ -99,7 +99,7 @@ set(sources_ljamalg
 add_subdirectory(builds)
 
 add_library(luajit STATIC ${sources_ljamalg} ${sources_genfiles})
-target_compile_definitions(luajit PUBLIC 
+target_compile_definitions(luajit PUBLIC  
   LUAJIT_TARGET=LUAJIT_ARCH_X64
   LJ_NO_UNWIND=1
   LJ_ABI_SOFTFP=0

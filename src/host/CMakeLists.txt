@@ -51,3 +51,11 @@ include_directories(../)
 add_executable(buildvm ${luajit_host_sources})
 add_dependencies(buildvm buildvm_arch)
 target_include_directories(buildvm PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../../dynasm)
+target_compile_definitions(buildvm PUBLIC
+  LUAJIT_TARGET=LUAJIT_ARCH_X64
+  LJ_NO_UNWIND=1
+  LJ_ABI_SOFTFP=0
+  LJ_ARCH_HASFPU=1
+  _FILE_OFFSET_BITS=64 _LARGEFILE_SOURCE LJ_ABI_SOFTFP=0
+  LUAJIT_SECURITY_PRNG=0 LUAJIT_SECURITY_STRHASH=0 LUAJIT_SECURITY_STRID=0
+)
