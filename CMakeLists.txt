@@ -108,7 +108,7 @@ target_compile_definitions(luajit PUBLIC
   LUAJIT_SECURITY_PRNG=0 LUAJIT_SECURITY_STRHASH=0 LUAJIT_SECURITY_STRID=0  
 )
 
-if (MINGW OR MSVC) # windows
+if (MINGW OR MSVC OR CMAKE_CROSS_COMPILING) # windows. CMAKE_CROSS_COMPILING is not a typo. at least, not here...
   target_compile_definitions(luajit PUBLIC WIN LUAJIT_OS=LUAJIT_OS_WINDOWS)
   set_source_files_properties(sources_genfiles PROPERTIES # on Windows, lj_vm.S is a PE Object
     EXTERNAL_OBJECT TRUE
