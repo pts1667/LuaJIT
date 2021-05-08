@@ -10,6 +10,7 @@ execute_process(
   -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
   "${CMAKE_CURRENT_SOURCE_DIR}/../src/host"
   WORKING_DIRECTORY "${HOST_BIN}"
+  COMMAND_ECHO STDOUT
 )
 
 execute_process(
