@@ -4,14 +4,27 @@ execute_process(
   COMMAND ${CMAKE_COMMAND} -E make_directory "${HOST_BIN}"
 )
 
-execute_process(
-  COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
-  -DCMAKE_BUILD_TYPE="Release"
-  -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
-  "${CMAKE_CURRENT_SOURCE_DIR}/../src/host"
-  WORKING_DIRECTORY "${HOST_BIN}"
-  COMMAND_ECHO STDOUT
-)
+if (CMAKE_CROSSCOMPILING or CMAKE_CROSS_COMPILING) # MXE is really buggy so one may need to include MXE's bin into their path
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
+    -DCMAKE_BUILD_TYPE="Release"
+    -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
+    -DCMAKE_C_COMPILER="/usr/bin/gcc"
+    -DCMAKE_CXX_COMPILER="/usr/bin/g++"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/host"
+    WORKING_DIRECTORY "${HOST_BIN}"
+    COMMAND_ECHO STDOUT
+  )
+else ()
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
+    -DCMAKE_BUILD_TYPE="Release"
+    -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/host"
+    WORKING_DIRECTORY "${HOST_BIN}"
+    COMMAND_ECHO STDOUT
+  )
+endif()
 
 execute_process(
   COMMAND ${CMAKE_COMMAND} --build .
