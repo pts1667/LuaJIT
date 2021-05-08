@@ -21,6 +21,10 @@ else ()
   set(DASM_FLAGS "${DASM_FLAGS} -D ENDIAN_LE")
 endif ()
 
+if (TARGET_WINDOWS)
+  set(DASM_FLAGS "${DASM_FLAGS} -D WIN")
+endif()
+
 set(luajit_minilua_sources
   "${CMAKE_CURRENT_SOURCE_DIR}/minilua.c"
 )
