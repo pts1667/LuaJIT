@@ -653,7 +653,6 @@ typedef struct global_State {
   GCRef gcroot[GCROOT_MAX];  /* GC roots. */
 
   //SPRING additions
-  void *ud; /* Auxillary user data. */
   lua_Func_fopen fopen_func;
   lua_Func_popen popen_func;
   lua_Func_pclose pclose_func;
