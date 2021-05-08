@@ -110,6 +110,9 @@ target_compile_definitions(luajit PUBLIC
 
 if (MINGW OR MSVC) # windows
   target_compile_definitions(luajit PUBLIC WIN LUAJIT_OS=LUAJIT_OS_WINDOWS)
+  set_source_files_properties(sources_genfiles PROPERTIES # on Windows, lj_vm.S is a PE Object
+    EXTERNAL_OBJECT TRUE
+    GENERATED TRUE)
 elseif (APPLE) # OS X
   target_compile_definitions(luajit PUBLIC LUAJIT_OS=LUAJIT_OS_OSX)
 elseif (UNIX) # Linux
