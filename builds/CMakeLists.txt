@@ -4,7 +4,7 @@ execute_process(
   COMMAND ${CMAKE_COMMAND} -E make_directory "${HOST_BIN}"
 )
 
-if (CMAKE_CROSSCOMPILING or CMAKE_CROSS_COMPILING) # MXE is really buggy so one may need to include MXE's bin into their path
+if (CMAKE_CROSSCOMPILING OR CMAKE_CROSS_COMPILING) # MXE is really buggy so one may need to include MXE's bin into their path
   execute_process(
     COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
     -DCMAKE_BUILD_TYPE="Release"
