@@ -112,6 +112,7 @@ typedef union { uint64_t u64; double d; } U64double;
 /* PRNG seeding function. */
 static void random_seed(PRNGState *rs, double d)
 {
+  #if 0
   uint32_t r = 0x11090601;  /* 64-k[i] as four 8 bit constants. */
   int i;
   for (i = 0; i < 4; i++) {
@@ -124,12 +125,16 @@ static void random_seed(PRNGState *rs, double d)
   }
   for (i = 0; i < 10; i++)
     (void)lj_prng_u64(rs);
+  #else
+    lj_spring_prng_seed_fixed(rs);
+  #endif
 }
 
 /* PRNG extract function. */
 LJLIB_PUSH(top-2)  /* Upvalue holds userdata with PRNGState. */
 LJLIB_CF(math_random)		LJLIB_REC(.)
 {
+#if 0
   int n = (int)(L->top - L->base);
   PRNGState *rs = (PRNGState *)(uddata(udataV(lj_lib_upvalue(L, 1))));
   U64double u;
@@ -176,6 +181,9 @@ LJLIB_CF(math_random)		LJLIB_REC(.)
   }  /* else: d is a double in range [0, 1] */
   setnumV(L->top++, d);
   return 1;
+#else
+  return spring_lua_unsynced_rand_c(L);
+#endif
 }
 
 /* PRNG seed function. */

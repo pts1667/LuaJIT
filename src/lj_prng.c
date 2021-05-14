@@ -11,6 +11,8 @@
 #define _GNU_SOURCE
 #endif
 
+#include "../../include/LuaUserC.h"
+
 #include "lj_def.h"
 #include "lj_arch.h"
 #include "lj_prng.h"
@@ -46,18 +48,41 @@
 /* PRNG step function with uint64_t result. */
 LJ_NOINLINE uint64_t LJ_FASTCALL lj_prng_u64(PRNGState *rs)
 {
+  #if 0
   uint64_t z, r = 0;
   TW223_STEP(rs, z, r)
   return r;
+  #else
+  return lj_spring_prng_u64(rs);
+  #endif
+}
+
+LJ_NOINLINE uint64_t LJ_FASTCALL lj_spring_prng_u64(PRNGState *rs)
+{
+  return spring_lua_unsynced_rand_raw_c();
 }
 
 /* PRNG step function with double in uint64_t result. */
 LJ_NOINLINE uint64_t LJ_FASTCALL lj_prng_u64d(PRNGState *rs)
 {
+  #if 0
   uint64_t z, r = 0;
   TW223_STEP(rs, z, r)
+  #else
+  uint64_t r = spring_lua_unsynced_rand_raw_c();
+  #endif
   /* Returns a double bit pattern in the range 1.0 <= d < 2.0. */
   return (r & U64x(000fffff,ffffffff)) | U64x(3ff00000,00000000);
+}
+
+LJ_NOINLINE uint64_t LJ_FASTCALL lj_spring_prng_u64d(PRNGState *rs)
+{
+  return spring_lua_unsynced_rand_raw_c();
+}
+
+LJ_NOINLINE void LJ_FASTCALL lj_spring_prng_seed_fixed(PRNGState *rs)
+{
+  spring_lua_unsynced_srand_raw_c();
 }
 
 /* Condition seed: ensure k[i] MSB of u[i] are non-zero. */

@@ -11,6 +11,11 @@ set(CMAKE_C_FLAGS_RELEASE "-O2 -fomit-frame-pointer ${LJ_MARCH}")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -fomit-frame-pointer ${LJ_MARCH}")
 set(CMAKE_C_FLAGS_PROFILE "-O2 -pg -fomit-frame-pointer ${LJ_MARCH}")
 
+set(sources_luauser
+  "${CMAKE_CURRENT_SOURCE_DIR}/../include/LuaUserC.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../include/LuaUser.cpp"
+)
+
 set(sources_ljlib
   "${CMAKE_CURRENT_SOURCE_DIR}/src/lib_aux.c"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/lib_base.c"
@@ -121,6 +126,8 @@ else () # something else
   target_compile_definitions(luajit PUBLIC LUAJIT_OS=LUAJIT_OS_OTHER)
 endif()
 
+add_library(luauser STATIC ${sources_luauser})
+
 if (ENABLE_STREFLOP)
-  target_link_libraries(luajit PUBLIC streflop)
+  target_link_libraries(luajit PUBLIC streflop luauser)
 endif ()
