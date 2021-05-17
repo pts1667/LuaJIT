@@ -137,6 +137,7 @@ else () # something else
 endif()
 
 add_library(luauser STATIC ${sources_luauser})
+target_include_directories(luauser PUBLIC ${GLEW_INCLUDE_DIR})
 
 if (ENABLE_STREFLOP)
   target_link_libraries(luajit PUBLIC streflop luauser)
