@@ -4,12 +4,13 @@ execute_process(
   COMMAND ${CMAKE_COMMAND} -E make_directory "${HOST_BIN}"
 )
 
-if (CMAKE_CROSSCOMPILING OR CMAKE_CROSS_COMPILING) # MXE is really buggy so one may need to include MXE's bin into their path
+if (CMAKE_CROSSCOMPILING OR CMAKE_CROSS_COMPILING)
   execute_process(
     COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
     -DCMAKE_BUILD_TYPE="Release"
     -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
     -DCMAKE_C_COMPILER=/usr/bin/gcc
+    -DCMAKE_ASM_COMPILER=/usr/bin/gcc
     -DCMAKE_CXX_COMPILER=/usr/bin/g++
     -DTARGET_WINDOWS=1
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/host"
@@ -52,7 +53,11 @@ endif ()
 
 set(LJ_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../src")
 
-set(LJVM_BOUT "${LJ_SRC_DIR}/lj_vm.S")
+if (MINGW OR MSVC)
+  set(LJVM_BOUT "${LJ_SRC_DIR}/lj_vm.lib")
+else ()
+  set(LJVM_BOUT "${LJ_SRC_DIR}/lj_vm.S")
+endif ()
 set(LJ_BCDEF "${LJ_SRC_DIR}/lj_bcdef.h")
 set(LJ_FFDEF "${LJ_SRC_DIR}/lj_ffdef.h")
 set(LJ_LIBDEF "${LJ_SRC_DIR}/lj_libdef.h")

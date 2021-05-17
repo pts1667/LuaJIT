@@ -93,9 +93,15 @@ set(sources_luajit
   "${CMAKE_CURRENT_SOURCE_DIR}/src/luajit.c"
 )
 
-set(sources_genfiles
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_vm.S"
-)
+if (MINGW OR MSVC OR CMAKE_CROSS_COMPILING)
+  set(sources_genfiles
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_vm.lib"
+  )
+else ()
+  set(sources_genfiles
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_vm.S"
+  )
+endif ()
 
 set(sources_ljamalg
   "${CMAKE_CURRENT_SOURCE_DIR}/src/ljamalg.c"
@@ -113,11 +119,15 @@ target_compile_definitions(luajit PUBLIC
   LUAJIT_SECURITY_PRNG=0 LUAJIT_SECURITY_STRHASH=0 LUAJIT_SECURITY_STRID=0  
 )
 
-if (MINGW OR MSVC OR CMAKE_CROSS_COMPILING) # windows. CMAKE_CROSS_COMPILING is not a typo. at least, not here...
+if (MINGW OR MSVC) # windows. CMAKE_CROSS_COMPILING is not a typo. at least, not here...
   target_compile_definitions(luajit PUBLIC WIN LUAJIT_OS=LUAJIT_OS_WINDOWS)
-  set_source_files_properties(sources_genfiles PROPERTIES # on Windows, lj_vm.S is a PE Object
+  add_library(lj_vm_genlib STATIC IMPORTED)
+  set_target_properties(lj_vm_genlib PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_vm.lib)
+  set_source_files_properties(sources_genfiles PROPERTIES
     EXTERNAL_OBJECT TRUE
     GENERATED TRUE)
+
+  target_link_libraries(luajit PUBLIC lj_vm_genlib)
 elseif (APPLE) # OS X
   target_compile_definitions(luajit PUBLIC LUAJIT_OS=LUAJIT_OS_OSX)
 elseif (UNIX) # Linux
