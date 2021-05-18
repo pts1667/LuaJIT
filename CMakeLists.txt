@@ -137,6 +137,7 @@ else () # something else
 endif()
 
 add_library(luauser STATIC ${sources_luauser})
+target_link_options(luajit PUBLIC "-fPIC")
 
 if (ENABLE_STREFLOP)
   target_link_libraries(luajit PUBLIC streflop luauser)
