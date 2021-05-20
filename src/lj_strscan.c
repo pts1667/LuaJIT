@@ -96,7 +96,7 @@ static void strscan_double(uint64_t x, TValue *o, int32_t ex2, int32_t neg)
   lj_assertX((int64_t)x >= 0, "bad double conversion");
   n = (double)(int64_t)x;
   if (neg) n = -n;
-  if (ex2) n = ldexp(n, ex2);
+  if (ex2) n = streflop_ldexp(n, ex2);
   o->n = n;
 }
 

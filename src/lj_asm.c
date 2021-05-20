@@ -1661,7 +1661,7 @@ static void asm_pow(ASMState *as, IRIns *ir)
   else
 #endif
   if (irt_isnum(IR(ir->op2)->t))
-    asm_callid(as, ir, IRCALL_pow);
+    asm_callid(as, ir, IRCALL_streflop_pow);
   else
     asm_fppowi(as, ir);
 }

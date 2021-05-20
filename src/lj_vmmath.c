@@ -17,21 +17,21 @@
 
 #if LJ_TARGET_X86 && __ELF__ && __PIC__
 /* Wrapper functions to deal with the ELF/x86 PIC disaster. */
-LJ_FUNCA double lj_wrap_log(double x) { return log(x); }
-LJ_FUNCA double lj_wrap_log10(double x) { return log10(x); }
-LJ_FUNCA double lj_wrap_exp(double x) { return exp(x); }
-LJ_FUNCA double lj_wrap_sin(double x) { return sin(x); }
-LJ_FUNCA double lj_wrap_cos(double x) { return cos(x); }
-LJ_FUNCA double lj_wrap_tan(double x) { return tan(x); }
-LJ_FUNCA double lj_wrap_asin(double x) { return asin(x); }
-LJ_FUNCA double lj_wrap_acos(double x) { return acos(x); }
-LJ_FUNCA double lj_wrap_atan(double x) { return atan(x); }
-LJ_FUNCA double lj_wrap_sinh(double x) { return sinh(x); }
-LJ_FUNCA double lj_wrap_cosh(double x) { return cosh(x); }
-LJ_FUNCA double lj_wrap_tanh(double x) { return tanh(x); }
-LJ_FUNCA double lj_wrap_atan2(double x, double y) { return atan2(x, y); }
-LJ_FUNCA double lj_wrap_pow(double x, double y) { return pow(x, y); }
-LJ_FUNCA double lj_wrap_fmod(double x, double y) { return fmod(x, y); }
+LJ_FUNCA double lj_wrap_log(double x) { return streflop_log(x); }
+LJ_FUNCA double lj_wrap_log10(double x) { return streflop_log10(x); }
+LJ_FUNCA double lj_wrap_exp(double x) { return streflop_exp(x); }
+LJ_FUNCA double lj_wrap_sin(double x) { return streflop_sin(x); }
+LJ_FUNCA double lj_wrap_cos(double x) { return streflop_cos(x); }
+LJ_FUNCA double lj_wrap_tan(double x) { return streflop_tan(x); }
+LJ_FUNCA double lj_wrap_asin(double x) { return streflop_asin(x); }
+LJ_FUNCA double lj_wrap_acos(double x) { return streflop_acos(x); }
+LJ_FUNCA double lj_wrap_atan(double x) { return streflop_atan(x); }
+LJ_FUNCA double lj_wrap_sinh(double x) { return streflop_sinh(x); }
+LJ_FUNCA double lj_wrap_cosh(double x) { return streflop_cosh(x); }
+LJ_FUNCA double lj_wrap_tanh(double x) { return streflop_tanh(x); }
+LJ_FUNCA double lj_wrap_atan2(double x, double y) { return streflop_atan2(x, y); }
+LJ_FUNCA double lj_wrap_pow(double x, double y) { return streflop_pow(x, y); }
+LJ_FUNCA double lj_wrap_fmod(double x, double y) { return streflop_fmod(x, y); }
 #endif
 
 /* -- Helper functions for generated machine code ------------------------- */
@@ -44,11 +44,11 @@ double lj_vm_foldarith(double x, double y, int op)
   case IR_MUL - IR_ADD: return x*y; break;
   case IR_DIV - IR_ADD: return x/y; break;
   case IR_MOD - IR_ADD: return x-lj_vm_floor(x/y)*y; break;
-  case IR_POW - IR_ADD: return pow(x, y); break;
+  case IR_POW - IR_ADD: return streflop_pow(x, y); break;
   case IR_NEG - IR_ADD: return -x; break;
-  case IR_ABS - IR_ADD: return fabs(x); break;
+  case IR_ABS - IR_ADD: return streflop_fabs(x); break;
 #if LJ_HASJIT
-  case IR_LDEXP - IR_ADD: return ldexp(x, (int)y); break;
+  case IR_LDEXP - IR_ADD: return streflop_ldexp(x, (int)y); break;
   case IR_MIN - IR_ADD: return x < y ? x : y; break;
   case IR_MAX - IR_ADD: return x > y ? x : y; break;
 #endif
@@ -76,7 +76,7 @@ int32_t LJ_FASTCALL lj_vm_modi(int32_t a, int32_t b)
 #ifdef LUAJIT_NO_LOG2
 double lj_vm_log2(double a)
 {
-  return log(a) * 1.4426950408889634074;
+  return streflop_log(a) * 1.4426950408889634074;
 }
 #endif
 
@@ -121,8 +121,8 @@ double lj_vm_foldfpm(double x, int fpm)
   case IRFPM_FLOOR: return lj_vm_floor(x);
   case IRFPM_CEIL: return lj_vm_ceil(x);
   case IRFPM_TRUNC: return lj_vm_trunc(x);
-  case IRFPM_SQRT: return sqrt(x);
-  case IRFPM_LOG: return log(x);
+  case IRFPM_SQRT: return streflop_sqrt(x);
+  case IRFPM_LOG: return streflop_log(x);
   case IRFPM_LOG2: return lj_vm_log2(x);
   default: lj_assertX(0, "bad fpm %d", fpm);
   }

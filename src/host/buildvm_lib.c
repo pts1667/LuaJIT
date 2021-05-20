@@ -97,9 +97,14 @@ static void libdef_module(BuildCtx *ctx, char *p, int arg)
 static int find_ffofs(BuildCtx *ctx, const char *name)
 {
   int i;
+  int mf = strncmp(name,"math_",5);
   for (i = 0; i < ctx->nglob; i++) {
     const char *gl = ctx->globnames[i];
-    if (gl[0] == 'f' && gl[1] == 'f' && gl[2] == '_' && !strcmp(gl+3, name)) {
+    if (!(gl[0] == 'f' && gl[1] == 'f' && gl[2] == '_')) continue;
+    if (!strcmp(gl+3, name)) {
+      return (int)((uint8_t *)ctx->glob[i] - ctx->code);
+    }
+    if (!mf && !strncmp(gl+3,"math_streflop_",14) && !strcmp(gl+17,name+5)) {
       return (int)((uint8_t *)ctx->glob[i] - ctx->code);
     }
   }
