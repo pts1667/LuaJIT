@@ -5,9 +5,10 @@ execute_process(
 )
 
 if (CMAKE_CROSSCOMPILING OR CMAKE_CROSS_COMPILING)
+  message(STATUS "luaJIT cross compile (host toolchain)")
   execute_process(
     COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
-    -DCMAKE_BUILD_TYPE="Release"
+    -DCMAKE_BUILD_TYPE=Release
     -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
     -DCMAKE_C_COMPILER=/usr/bin/gcc
     -DCMAKE_ASM_COMPILER=/usr/bin/gcc
@@ -20,7 +21,7 @@ if (CMAKE_CROSSCOMPILING OR CMAKE_CROSS_COMPILING)
 else ()
   execute_process(
     COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
-    -DCMAKE_BUILD_TYPE="Release"
+    -DCMAKE_BUILD_TYPE=Release
     -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/host"
     WORKING_DIRECTORY "${HOST_BIN}"

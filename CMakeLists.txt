@@ -1,10 +1,6 @@
 include_directories(BEFORE ../../streflop)
 
-if (MARCH_FLAG)
-  set(LJ_MARCH "-march=${MARCH_FLAG}")
-else(MARCH_FLAG)
-  set(LJ_MARCH "-mtune=generic")
-endif (MARCH_FLAG)
+set(LJ_MARCH "-march=k8")
 
 set(CMAKE_C_FLAGS_DEBUG "-fomit-frame-pointer ${LJ_MARCH}")
 set(CMAKE_C_FLAGS_RELEASE "-O2 -fomit-frame-pointer ${LJ_MARCH}")
@@ -93,7 +89,7 @@ set(sources_luajit
   "${CMAKE_CURRENT_SOURCE_DIR}/src/luajit.c"
 )
 
-if (MINGW OR MSVC OR CMAKE_CROSS_COMPILING)
+if (MINGW OR MSVC)
   set(sources_genfiles
     "${CMAKE_CURRENT_SOURCE_DIR}/src/lj_vm.lib"
   )
@@ -138,6 +134,7 @@ endif()
 
 add_library(luauser STATIC ${sources_luauser})
 if (NOT MSVC)
+  target_compile_options(luajit PUBLIC "-fPIC")
   target_link_options(luajit PUBLIC "-fPIC")
 endif ()
 target_include_directories(luauser PUBLIC ${GLEW_INCLUDE_DIR})
